@@ -51,14 +51,16 @@ class Player(Character):
             number += 1
             print(number, n)
 
-        while True:
+        attack_choice = ""
+
+        while type(attack_choice) is not int:
             try:
                 attack_choice = int(input("\nWhich skill will you choose to attack with? "))
             except ValueError:
                 print("Inform the number of the skill.")
                 continue
-            else:
-                break
+            # else:
+            #     break
 
         if attack_choice not in range(1, 4):
             print(my_ascii_art.art_list[0])
