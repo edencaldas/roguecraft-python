@@ -107,8 +107,8 @@ fishman = Character("Fishman", 120, 5, "Poke", "Poison", "Impale", 20, 30, 40, T
 bear = Character("Bear", 200, 5, "Claw", "Maul", "Hug", 20, 30, 40, True, "claws your face",
                  "mauls you", "gives you a bear hug")
 
-goblin_wizard = Character("Goblin Wizard", 120, 5, "Staff", "Lighting Bolt", "Rock Golem", 20, 30, 40, True, "hits you with his staff",
-                          "casts Lighting bolt", "summons a Rock Golem, which hits you")
+goblin_wizard = Character("Goblin Wizard", 120, 5, "Staff", "Lighting Bolt", "Rock Golem", 20, 30, 40, True,
+                          "hits you with his staff", "casts Lighting bolt", "summons a Rock Golem, which hits you")
 
 battle_message = [
     "You stumble upon",
@@ -131,10 +131,10 @@ for enemies in characters:
 
     enemy = enemies
     encounter_number = characters.index(enemy) + 1
+    random_battle_message = random.choice(battle_message)
 
-    random_battle_message = random.randint(0, 6)
     clear()
-    print(f"# {encounter_number}\n{battle_message[random_battle_message]} {enemy.name}!\n")
+    print(f"# {encounter_number}\n{random_battle_message} {enemy.name}!\n")
     print(my_ascii_art.art_list[encounter_number])
 
     while player1.health >= 1:
