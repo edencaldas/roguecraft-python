@@ -1,6 +1,6 @@
-import random, my_ascii_art
-
-from builtins import input
+import my_ascii_art
+import random
+import os
 
 
 class Character:
@@ -53,29 +53,35 @@ class Player(Character):
 
         while True:
             try:
-                attack_choice = int(input("\nWhich skill will you choose to attack with? ")) - 1
+                attack_choice = int(input("\nWhich skill will you choose to attack with? "))
             except ValueError:
                 print("Inform the number of the skill.")
                 continue
             else:
                 break
 
-        if attack_choice not in range(1, 3):
+        if attack_choice not in range(1, 4):
             print(my_ascii_art.art_list[0])
-
             print("\nYou got confused when deciding on a skill to use, and farted instead. This effect has healed the "
                   "enemy!\n")
-            return 100
+            return 100  # heals enemy
         else:
-            damage = self.power + attack_damages[attack_choice]
+            damage = self.power + attack_damages[attack_choice - 1]
             health_left = target_health - damage
-            print(f"\n{self.name} {attack_messages[attack_choice]} for {damage} damage!")
+            print(f"\n{self.name} {attack_messages[attack_choice - 1]} for {damage} damage!")
 
             if health_left > 0:
                 print(f"{target_name} has {health_left} health left!")
 
             print("")
             return health_left
+
+
+def clear():
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
 
 
 player_name = input("Hi. Welcome to the adventures of roguecraft. May I please know your name?: ")
@@ -98,6 +104,12 @@ skeleton = Character("Skeleton", 110, 5, "Kick", "club", "throw", 20, 25, 35, Tr
 fishman = Character("Fishman", 120, 5, "Poke", "Poison", "Impale", 20, 30, 40, True, "pokes you with the trident",
                     "casts poison cloud", "leaps at you and impales you from the back")
 
+bear = Character("Bear", 200, 5, "Claw", "Maul", "Hug", 20, 30, 40, True, "claws your face",
+                 "mauls you", "gives you a bear hug")
+
+goblin_wizard = Character("Goblin Wizard", 120, 5, "Staff", "Lighting Bolt", "Rock Golem", 20, 30, 40, True, "hits you with his staff",
+                          "casts Lighting bolt", "summons a Rock Golem, which hits you")
+
 battle_message = [
     "You stumble upon",
     "It's a trap! You are surprised by",
@@ -107,7 +119,7 @@ battle_message = [
     "You feel something is following you. You turn around and see",
     "An enemy appears! It's a"]
 
-characters = [slime, zombie, skeleton, fishman]
+characters = [slime, zombie, skeleton, fishman, bear, goblin_wizard]
 
 player1 = player
 game_over = False
@@ -115,13 +127,13 @@ game_over = False
 for enemies in characters:
 
     if game_over:
-        print("Game Over!")
         break
 
     enemy = enemies
     encounter_number = characters.index(enemy) + 1
 
     random_battle_message = random.randint(0, 6)
+    clear()
     print(f"# {encounter_number}\n{battle_message[random_battle_message]} {enemy.name}!\n")
     print(my_ascii_art.art_list[encounter_number])
 
@@ -139,8 +151,12 @@ for enemies in characters:
             break
 
 if player1.health > 0:
+    clear()
     print("Congratulations! You have defeated all enemies from the Lands of Roguecraft!\nVictory has been achieved!")
     print()
-    print(f"The great warrior {player1.name} will be forever remembered by the citizens of the Nobutown.")
+    print(f"The great warrior {player1.name} will be forever remembered by the citizens of Nobutown.")
+
+if player1.health <= 0:
+    print("Game Over!")
 
 exit(0)
