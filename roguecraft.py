@@ -40,6 +40,8 @@ class Character:
 
 
 class Player(Character):
+    level = 1
+
     def attack(self, target_health, target_name):
         attack_messages = [self.attack1_message, self.attack2_message, self.attack3_message]
         attack_damages = [self.attack1_damage, self.attack2_damage, self.attack3_damage]
@@ -78,6 +80,33 @@ class Player(Character):
             print("")
             return health_left
 
+    def levelup(self):
+        self.health = self.health + (self.level * 10)
+        self.power = self.power + (self.level * 2)
+
+    def rest(self, starting_health):
+        self.health = starting_health
+
+
+def choose_at_bonfire():
+    bonfire_choice = ""
+    if encounter_number % 3 == 0:
+        print(f"After the battle, {player_name} decides to make a boomfire and ponder about his next move.")
+        print()
+        print("1 - Reflect on your last battles.\n"
+              "2 - Take this time to enjoy your hard earned rest.")
+        choice = input(int("Choose: "))
+        if choice == 1:
+            bonfire_choice = "rest"
+        elif choice == 2:
+            bonfire_choice = "levelup"
+        else:
+            print(f"{player_name} did not choose what to do, fell asleep on the ground, skipping the opportunity.")
+            bonfire_choice = "skip"
+
+        return bonfire_choice
+
+
 
 def clear():
     if os.name == "nt":
@@ -86,7 +115,12 @@ def clear():
         os.system("clear")
 
 
-player_name = input("Hi. Welcome to the adventures of roguecraft. May I please know your name?: ")
+try:
+    player_name = input("Hi. Welcome to the adventures of roguecraft. May I please know your name?: ")
+except KeyboardInterrupt:
+    print("\n\nExiting...")
+    exit(0)
+
 print("")
 print("=== Game Start ===")
 print("")
@@ -133,6 +167,7 @@ for enemies in characters:
 
     enemy = enemies
     encounter_number = characters.index(enemy) + 1
+    choose_at_bonfire()
     random_battle_message = random.choice(battle_message)
 
     clear()
@@ -141,16 +176,21 @@ for enemies in characters:
 
     while player1.health >= 1:
 
-        enemy.health = player1.attack(enemy.health, enemy.name)
-        if enemy.health <= 0:
-            print(f"{player1.name} defeats {enemy.name}!\n")
-            break
+        try:
+            enemy.health = player1.attack(enemy.health, enemy.name)
+            if enemy.health <= 0:
+                print(f"{player1.name} defeats {enemy.name}!\n")
+                break
 
-        player1.health = enemy.attack(player1.health, player1.name)
-        if player1.health <= 0:
-            print(f"{enemy.name} has defeated you!")
-            game_over = True
-            break
+            player1.health = enemy.attack(player1.health, player1.name)
+            if player1.health <= 0:
+                print(f"{enemy.name} has defeated you!")
+                game_over = True
+                break
+
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            exit(0)
 
 if player1.health > 0:
     clear()
