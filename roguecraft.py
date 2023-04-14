@@ -9,6 +9,7 @@ class Character:
                  is_alive, attack1_message, attack2_message, attack3_message):
         self.name = name
         self.health = health
+        self.health_current = self.health
         self.power = power
         self.attack1_name = attack1_name
         self.attack2_name = attack2_name
@@ -49,20 +50,29 @@ class Player(Character):
         # attack = random.randint(0, 2)  # select the attack
 
         number = 0
-        for n in attack_names:
+        for name in attack_names:
             number += 1
-            print(number, n)
+            print(number, name)
+
+        print("4 Check stats")
 
         attack_choice = ""
+        player_stats = f"""
+        {self.name}'s stats
+        Class: Aspirant Hero, LVL: {self.level}
+        Health: {self.health_current}/{self.health}
+        Attack: {self.power}
+        """
 
         while type(attack_choice) is not int:
             try:
                 attack_choice = int(input("\nWhich skill will you choose to attack with? "))
+                if attack_choice == 4:
+                    print(player_stats)
+                    attack_choice = ""
             except ValueError:
                 print("Inform the number of the skill.")
                 continue
-            # else:
-            #     break
 
         if attack_choice not in range(1, 4):
             print(my_ascii_art.art_list[0])
@@ -80,39 +90,34 @@ class Player(Character):
             print("")
             return health_left
 
-    def levelup(self):
-        self.health = self.health + (self.level * 10)
-        self.power = self.power + (self.level * 2)
+    def choose_at_bonfire(self):
+        if encounter_number % 3 == 0:
+            print(f"After the battle, {player_name} decides to make a bonfire and ponder about his next move.")
+            print()
+            print("1 - Reflect on your last battles.\n"
+                  "2 - Take this time to enjoy your hard earned rest.")
 
-    def rest(self, starting_health):
-        self.health = starting_health
+            choice = input("Choose: ")
 
+            if choice == "1":
+                self.health = self.health + (self.level * 10)
+                self.power = self.power + (self.level * 2)
+                print(f"{player_name}'s Max health is now {self.health}")
+                print(f"{player_name}'s Attack power is now {self.power}")
+            elif choice == "2":
+                print(f"Health was: {self.health}")
+                self.health = starting_health
+                print(f"Replenished to: {self.health}")
 
-def choose_at_bonfire():
-    bonfire_choice = ""
-    if encounter_number % 3 == 0:
-        print(f"After the battle, {player_name} decides to make a boomfire and ponder about his next move.")
-        print()
-        print("1 - Reflect on your last battles.\n"
-              "2 - Take this time to enjoy your hard earned rest.")
-        choice = input(int("Choose: "))
-        if choice == 1:
-            bonfire_choice = "rest"
-        elif choice == 2:
-            bonfire_choice = "levelup"
-        else:
-            print(f"{player_name} did not choose what to do, fell asleep on the ground, skipping the opportunity.")
-            bonfire_choice = "skip"
-
-        return bonfire_choice
+            else:
+                print(f"{player_name} did not choose what to do, fell asleep on the ground, skipping the opportunity.")
 
 
-
-def clear():
-    if os.name == "nt":
-        os.system("cls")
-    else:
-        os.system("clear")
+# def clear():
+#     if os.name == "nt":
+#         os.system("cls")
+#     else:
+#         os.system("clear")
 
 
 try:
@@ -158,6 +163,7 @@ battle_message = [
 characters = [slime, zombie, skeleton, fishman, bear, goblin_wizard]
 
 player1 = player
+starting_health = player1.health  # for replenishing HP later
 game_over = False
 
 for enemies in characters:
@@ -167,10 +173,9 @@ for enemies in characters:
 
     enemy = enemies
     encounter_number = characters.index(enemy) + 1
-    choose_at_bonfire()
+    player1.choose_at_bonfire()
     random_battle_message = random.choice(battle_message)
 
-    clear()
     print(f"# {encounter_number}\n{random_battle_message} {enemy.name}!\n")
     print(my_ascii_art.art_list[encounter_number])
 
@@ -178,6 +183,7 @@ for enemies in characters:
 
         try:
             enemy.health = player1.attack(enemy.health, enemy.name)
+            print()
             if enemy.health <= 0:
                 print(f"{player1.name} defeats {enemy.name}!\n")
                 break
@@ -193,7 +199,6 @@ for enemies in characters:
             exit(0)
 
 if player1.health > 0:
-    clear()
     print("Congratulations! You have defeated all enemies from the Lands of Roguecraft!\nVictory has been achieved!")
     print()
     print(f"The great warrior {player1.name} will be forever remembered by the citizens of Nobutown.")
