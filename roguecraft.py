@@ -80,7 +80,7 @@ class Player(Character):
                   "enemy!\n")
             return 100  # heals enemy
         else:
-            damage = self.power + attack_damages[attack_choice - 1]
+            damage = self.power + attack_damages[attack_choice - 1] + self.level
             health_left = target_health - damage
             print(f"\n{self.name} {attack_messages[attack_choice - 1]} for {damage} damage!")
 
@@ -104,6 +104,7 @@ class Player(Character):
                 self.power = self.power + (self.level * 2)
                 print(f"{player_name}'s Max health is now {self.health}")
                 print(f"{player_name}'s Attack power is now {self.power}")
+                self.level += 1
             elif choice == "2":
                 print(f"Health was: {self.health}")
                 self.health = starting_health
